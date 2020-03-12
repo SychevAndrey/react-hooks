@@ -1,39 +1,46 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
+const ctx = React.createContext();
+
 const App = () => {
-    return (
-        <>
-        <HookSwitcher />
-        </>
-    );
+    const [value, setValue] = useState(0);
+    const [visible, setVisible] = useState(true)
+
+    if (visible) {
+        return (
+            <ctx.Provider value="This is React Hooks">
+                <HookUseContext />
+                <HookCounter value={value}/>
+                <div>
+                    <button onClick={() => setValue((v) => v +1)}>+</button>
+                    <button onClick={() => setValue((v) => v - 1)}>-</button>
+                    <button onClick={() => setVisible(false)}>hide</button>
+                </div>
+            </ctx.Provider>
+        );
+    } else {
+        return (
+            <button onClick={() => setVisible(true)}>show</button>
+        );
+    }
 }
 
-const HookSwitcher = () => {
-    const [color, setColor] = useState('white');
-    const [fontSize, setFontSize] = useState(14);
+const HookUseContext = () => {
+    const value = useContext(ctx);
+    return <p>{value}</p>;
+}
 
-    function setSize(e) {
-        let value = Number(e.target.value);
-        setFontSize(value);
-    }
-
-    return (
-        <div style={{padding: '10px', 
-                    backgroundColor: color,
-                    fontSize: `${fontSize}px`}}>
-            Hello world!<br></br>
-            <button 
-            onClick={() => setColor('red')}>Red</button>
-            <button 
-            onClick={() => setColor('green')}>Green</button>
-            <button 
-            onClick={() => setFontSize((fontSize) => fontSize + 2)}>Bigger</button>
-            <button 
-                onClick={() => setFontSize((fontSize) => fontSize - 2)}>Smaller</button>
-            <input onKeyUp={(e) => setSize(e)}></input>
-        </div>
-    );
+const HookCounter = ({ value }) => {
+    useEffect(() => {
+        console.log("Use effect with [ ] on 2nd param works like componentDidMount");
+        return () => console.log('clear 1');
+    }, [ ]);
+    useEffect(() => {
+        console.log("Use effect with params on 2nd param works like componentDidUpdate");
+        return () => console.log('clear 2');
+    }, [value]);
+    return <p>{value}</p>;
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));
