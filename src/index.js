@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useContext, useState, useEffect, useCallback, createElement } from 'react';
 import ReactDOM from 'react-dom';
 
 const ctx = React.createContext();
@@ -104,8 +104,12 @@ const ShowInfo = ({ id }) => {
         return <div>Error</div>
     if (loading)
         return <div>{id} ...loading</div>;
-    return <div>TVmaze show #{id} is {data && data.name}</div>;
-
+    return (
+        <>
+            <div>TVmaze show #{id} is {data && data.name}</div>
+            <div>{data.summary}</div>
+        </>
+    );
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));
